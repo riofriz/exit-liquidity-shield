@@ -142,12 +142,14 @@
           ${bigWhales.length > 0 ?
           `<div class="c-info__cell u-font-size-zh-3xs" style="margin: 10px 0;border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px;">
               <span class="u-color-red">Whale Dumpers:</span><br /><br/>
-              ${bigWhales.map(whale => `
-                <div style="width: 100%; display: flex; align-items: center; justify-content: space-between;">
+              <div style="max-height: 150px; overflow-y: auto;">
+                ${bigWhales.map(whale => `
+                  <div style="width: 100%; display: flex; align-items: center; justify-content: space-between;">
                   <span style="cursor: pointer;" onclick="navigator.clipboard.writeText('${whale.wallet}')">📋 ${whale.wallet.substring(0, 4)}...${whale.wallet.substring(whale.wallet.length - 3)}</span>
                   <span>${whale.solAmount} SOL</span>
                 </div>
               `).join('')}
+              </div>
             </div>`
           : ''
         }
