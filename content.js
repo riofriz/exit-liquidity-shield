@@ -72,10 +72,13 @@
       
       rows.forEach((row) => {
         const type = row.querySelectorAll('.c-grid-table__td')[1]?.textContent?.trim();
-        const wallet = row.querySelector('.c-grid-table__td a')?.textContent?.trim();
+        const walletLink = row.querySelector('.c-grid-table__td a')?.href;
+        const wallet = walletLink ? walletLink.split('/account/')[1] : null;
         const solAmount = parseFloat(
           row.querySelector('.c-grid-table__td:nth-child(5)')?.textContent?.replace(/₆|₃|,/g, '') || 0
         );
+
+        console.log('Full wallet address:', wallet);
 
         if (wallet && solAmount) {
           if (!allWalletStats[wallet]) {
@@ -115,6 +118,23 @@
         })
         .slice(0, 10);
 
+      // Calculate total scammer profits
+      const totalScammerWins = sortedStats.reduce((total, {data}) => {
+        const profit = data.sellAmount - data.buyAmount;
+        return total + (profit > 0 ? profit : 0);
+      }, 0);
+
+      // Update the header to include total wins
+      const headerDiv = document.querySelector('.js-info h6');
+      if (headerDiv) {
+        headerDiv.innerHTML = `
+          Potentially Pump & Dump
+          <div style="font-size: 11px; margin-top: 4px;">
+            <span class="u-color-red">Total Scammers Wins: ${totalScammerWins.toFixed(2)} SOL</span>
+          </div>
+        `;
+      }
+
       if (sortedStats.length === 0) {
         statsList.innerHTML = `
           <div class="l-row l-row-gap--l u-mt-s">
@@ -139,13 +159,16 @@
           const tokenFlowSign = tokenFlow >= 0 ? '+' : '';
           const plSign = profitLoss >= 0 ? '+' : '';
 
+          console.log('Full wallet address:', wallet);
+          console.log('Truncated address:', `${wallet.substring(0, 4)}...${wallet.substring(wallet.length - 3)}`);
+
           return `
             <div class="l-row l-row-gap--l u-mt-s">
               <div class="l-col">
                 <div class="c-info__cell u-font-size-zh-3xs">
                   <div class="l-row u-justify-content-between" style="align-items: center;">
                     <div class="l-col-auto" style="flex: 1;">
-                      ${threat.icon} <span class="${threat.class}">${wallet.substring(0, 5)}...${wallet.substring(wallet.length - 4)}</span>
+                      ${threat.icon} <span class="${threat.class}" title="${wallet}">${wallet.substring(0, 4)}...${wallet.substring(wallet.length - 3)}</span>
                     </div>
                     <div class="l-col-auto" style="flex: 1; text-align: right;">
                       <span title="Token Flow">🔄 <span class="${tokenFlowClass}">${tokenFlowSign}${tokenFlow.toFixed(2)}</span></span><br />
