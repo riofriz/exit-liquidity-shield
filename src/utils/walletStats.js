@@ -20,21 +20,26 @@ const walletStats = {
       };
     }
     
-    if (tradeCount > 3) {
+    if (tradeCount > 2) {
       return {
         level: 'low',
         icon: '👀',
-        class: 'u-color-green',
+        class: 'u-color-yellow',
         message: 'Low risk: Normal trading activity'
       };
     }
   
-    return null;
+    return {
+      level: 'none',
+      icon: '✅',
+      class: 'u-color-green',
+      message: 'New or minimal activity'
+    };
   },
   
   calculateTotalScammerWins(stats) {
-    return stats.reduce((total, {data}) => {
-      const profit = data.sellAmount - data.buyAmount;
+    return stats.reduce((total, entry) => {
+      const profit = entry.data.sellAmount - entry.data.buyAmount;
       return total + (profit > 0 ? profit : 0);
     }, 0);
   }
