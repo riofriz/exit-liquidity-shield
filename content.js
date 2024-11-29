@@ -94,7 +94,7 @@
           </div>
           <span class="u-color-red">Potential Scammer Earnings: ${totalScammerWins.toFixed(2)} SOL</span>
           <br/>
-          <span style="font-size: 16px; margin-bottom: 10px;">
+          <span style="font-size: 16px; margin-top: 10px; display: block;">
             Top 6 Offenders: <br /><span style="font-size: 10px;">(last updated ${new Date().toLocaleTimeString()})</span>
           </span>
         </div>
