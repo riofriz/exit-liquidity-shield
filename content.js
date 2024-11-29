@@ -8,7 +8,7 @@
     
     statsDiv.innerHTML = `
       <div class="c-info js-info">
-        <h6 class="u-font-size-zh-3xs u-p-xs">Potentially Pump & Dump</h6>
+        <h6 class="u-font-size-zh-3xs u-p-xs">Pump & Dump Detection</h6>
         <div class="c-info__content js-info__content">
           <div id="wallet-stats-list"></div>
         </div>
