@@ -9,6 +9,8 @@
     targetSection.appendChild(statsDiv);
   }
 
+  let processedTransactions = new Set();
+
   function updateWalletStats() {
     const statsList = document.getElementById('wallet-stats-list');
     if (!statsList) {
@@ -25,8 +27,12 @@
       const solAmount = parseFloat(
         row.querySelector('.c-grid-table__td:nth-child(5)')?.textContent?.replace(/₆|₃|,/g, '') || 0
       );
+      
+      const txId = row.querySelector('.c-grid-table__td:nth-child(1)')?.textContent?.trim();
 
-      if (wallet && solAmount) {
+      if (wallet && solAmount && txId && !processedTransactions.has(txId)) {
+        processedTransactions.add(txId);
+
         if (!allWalletStats[wallet]) {
           allWalletStats[wallet] = { buys: 0, sells: 0, buyAmount: 0, sellAmount: 0 };
         }

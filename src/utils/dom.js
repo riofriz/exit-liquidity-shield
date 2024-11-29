@@ -8,7 +8,7 @@ const dom = {
     statsDiv.innerHTML = `
       <div class="c-info js-info">
         <h6 class="u-font-size-zh-3xs u-p-xs">Pump & Dump Detection</h6>
-        <div class="c-info__content js-info__content">
+        <div class="js-info__content" style="padding: 0 0.8em;">
           <div id="wallet-stats-list"></div>
         </div>
       </div>
@@ -23,7 +23,7 @@ const dom = {
     return `
       <div class="l-row l-row-gap--l u-mt-s">
         <div class="l-col">
-          <div class="c-info__cell u-font-size-zh-3xs">
+          <div class="c-info__cell u-font-size-zh-3xs" style="border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px; margin-bottom: 8px;">
             <div class="l-row u-justify-content-between" style="align-items: center;">
               <div class="l-col-auto" style="flex: 1;">
                 ${threat.icon} <span class="${threat.class}" title="${wallet}">${wallet.substring(0, 4)}...${wallet.substring(wallet.length - 3)}</span>
