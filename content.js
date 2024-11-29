@@ -10,15 +10,11 @@
   }
 
   let processedTransactions = new Set();
-
-  let updateCounter = 0;
-  let lastUpdateTime = Date.now();
+  window.whaleTransactions = [];
+  let whaleTransactions = window.whaleTransactions;
 
   function updateWalletStats() {
-    updateCounter++;
-    const now = Date.now();
-    const timeSinceLastUpdate = now - lastUpdateTime;
-    lastUpdateTime = now;
+    const bigWhales = whaleTransactions.map(tx => ({ wallet: tx.wallet, solAmount: tx.solAmount }));
 
     const statsList = document.getElementById('wallet-stats-list');
     if (!statsList) {
@@ -31,16 +27,37 @@
     rows.forEach((row) => {
       const txId = row.getAttribute('data-uid');
       if (processedTransactions.has(txId)) {
-        return; // Skip if we've already processed this transaction
+        return;
       }
-      processedTransactions.add(txId);
 
       const type = row.querySelectorAll('.c-grid-table__td')[1]?.textContent?.trim();
       const walletLink = row.querySelector('.c-grid-table__td a')?.href;
       const wallet = walletLink ? walletLink.split('/account/')[1] : null;
       const solAmount = parseFloat(
-        row.querySelector('.c-grid-table__td:nth-child(5)')?.textContent?.replace(/₆|₃|,/g, '') || 0
+        row.querySelector('.c-grid-table__td:nth-child(7)')?.textContent?.replace(/₆|₃|,/g, '') || 0
       );
+
+      if (parseFloat(solAmount) >= 10 && !whaleTransactions.some(tx => tx.wallet === wallet)) {
+        const currentTxTime = row.querySelector('.c-grid-table__td:first-child')?.textContent;
+        const isRecentTxs = Array.from(rows).filter(r => {
+          const txWallet = r.querySelector('.c-grid-table__td a')?.href?.split('/account/')[1];
+          if (txWallet !== wallet) return false;
+
+          const txtime = r.querySelector('.c-grid-table__td:first-child')?.textContent;
+          return (currentTxTime === txtime || currentTxTime.includes('s'));
+        });
+
+        if (isRecentTxs) {
+          whaleTransactions.push({
+            txId,
+            wallet,
+            solAmount: solAmount.toFixed(2)
+          });
+          console.log(`whale added to array: ${wallet} - ${solAmount}`);
+        }
+      }
+
+      processedTransactions.add(txId);
 
       if (!wallet || !solAmount) {
         return;
@@ -94,11 +111,23 @@
           </div>
           <span class="u-color-red">Potential Scammer Earnings: ${totalScammerWins.toFixed(2)} SOL</span>
           <br/>
+          ${bigWhales.length > 0 ?
+          `<div class="c-info__cell u-font-size-zh-3xs" style="margin: 10px 0;border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px;">
+              <span class="u-color-red">Whale Dumpers:</span><br /><br/>
+              ${bigWhales.map(
+            whale => `<div style="width: 100%; display: flex; align-items: center; justify-content: space-between;">
+                  <span style="cursor: pointer;" onclick="navigator.clipboard.writeText('${whale.wallet}')">📋 ${whale.wallet.substring(0, 4)}...${whale.wallet.substring(whale.wallet.length - 3)}</span>
+                  <span>${whale.solAmount} SOL</span>
+                </div>`
+          ).join('')}
+            </div>`
+          : ''
+        }
           <span style="font-size: 16px; margin-top: 10px; display: block;">
             Top 6 Offenders: <br /><span style="font-size: 10px;">(last updated ${new Date().toLocaleTimeString()})</span>
-          </span>
-        </div>
-      `;
+      </span>
+        </div >
+        `;
 
       // Reattach event listener since innerHTML replacement removes it
       const filterBtn = document.getElementById('filter-bots-btn');
@@ -124,12 +153,12 @@
     // Render stats
     statsList.innerHTML = sortedStats.length === 0
       ? `<div class="l-row l-row-gap--l u-mt-s">
-           <div class="l-col">
-             <div class="c-info__cell u-font-size-zh-3xs u-text-center">
-               <span style="color: #4CAF50">✅ No suspicious activity detected so far</span>
-             </div>
-           </div>
-         </div>`
+          <div class="l-col">
+            <div class="c-info__cell u-font-size-zh-3xs u-text-center">
+              <span style="color: #4CAF50">✅ No suspicious activity detected so far</span>
+            </div>
+          </div>
+        </div>`
       : sortedStats
         .map(({ wallet, data, threat }) => {
           const tokenFlow = data.buyAmount - data.sellAmount;

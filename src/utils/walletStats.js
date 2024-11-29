@@ -56,13 +56,14 @@ const walletStats = {
 
     const totalTxs = genuineTxs + susTxs;
     const susRatio = susTxs / (totalTxs || 1);
+    const whaleCount = window.whaleTransactions?.length || 0;
 
     let riskLevel;
     let riskIcon;
     let riskClass;
-    if (susRatio > 0.5 && highRiskWallets > 3) {
-      riskLevel = "SEVERE";
-      riskIcon = "🔥";
+    if (whaleCount >= 4 || (susRatio > 0.5 && highRiskWallets > 3)) {
+      riskLevel = whaleCount >= 4 ? "WHALE DUMPERS" : "SEVERE PUMP & DUMP";
+      riskIcon = whaleCount >= 4 ? "🔥" : "🚨";
       riskClass = "u-color-red";
     } else if (susRatio > 0.3 || highRiskWallets > 2) {
       riskLevel = "HIGH";
