@@ -21,6 +21,13 @@
     }
 
     function updateWalletStats() {
+      const list = document.getElementById('wallet-stats-list');
+      if (!list) {
+        console.log('Stats list element not found, retrying in 1 second...');
+        setTimeout(updateWalletStats, 1000);
+        return;
+      }
+
       const rows = document.querySelectorAll('.c-grid-table__tr');
       
       rows.forEach((row) => {
@@ -66,9 +73,17 @@
       statsList.innerHTML = sortedStats
         .map(([wallet, data]) => {
           const totalVolume = data.buyAmount + data.sellAmount;
-          const netPosition = data.buyAmount - data.sellAmount;
+          const netPosition = data.sellAmount - data.buyAmount;
           const netPositionClass = netPosition >= 0 ? 'u-color-green' : 'u-color-red';
           const netPositionSign = netPosition >= 0 ? '+' : '';
+          
+          const tokenFlow = data.buyAmount - data.sellAmount;
+          const profitLoss = data.sellAmount - data.buyAmount;
+
+          const tokenFlowClass = tokenFlow >= 0 ? 'u-color-green' : 'u-color-red';
+          const plClass = profitLoss >= 0 ? 'u-color-green' : 'u-color-red';
+          const tokenFlowSign = tokenFlow >= 0 ? '+' : '';
+          const plSign = profitLoss >= 0 ? '+' : '';
           
           return `
             <div class="l-row l-row-gap--l u-mt-s">
@@ -78,8 +93,9 @@
                     <div class="l-col-auto">
                       ${wallet.substring(0, 5)}...${wallet.substring(wallet.length - 4)}
                     </div>
-                    <div class="l-col-auto ${netPositionClass}">
-                      ${netPositionSign}${netPosition.toFixed(2)} SOL
+                    <div class="l-col-auto">
+                      <span title="Token Flow">🔄 money flow: <span class="${tokenFlowClass}">${tokenFlowSign}${tokenFlow.toFixed(2)}</span></span>
+                      <span title="Profit/Loss" style="margin-left: 8px">💰 Scammer ${profitLoss >= 0 ? 'wins' : 'loses'}: <span class="${plClass}">${plSign}${profitLoss.toFixed(2)}</span></span>
                     </div>
                   </div>
                   <div class="l-row u-justify-content-between">

@@ -21,8 +21,13 @@ ETH: 0xfe89834C92C399E720F457bB73fEa1EFe1D0e17D
 
 ### Example of a Pump & Dump Pattern
 
+When you see somethign like this in the potential pump & dump section:
 ![Pump and Dump Example](images/pumpdump.png)
 _This chart shows a typical pump & dump pattern where price is artificially inflated before a sharp sell-off_
+
+Trust me, it will ALWAYS end up like this:
+![Pump and Dump Example](images/pumpdump-final.jpeg)
+_This chart shows the obvious end of the pump & dump pattern_
 
 ## Installation
 
