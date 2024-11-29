@@ -1,7 +1,7 @@
 const walletStats = {
   getWalletThreatLevel(data) {
     const tradeCount = data.buys + data.sells;
-    
+
     if (tradeCount > 8) {
       return {
         level: 'high',
@@ -10,8 +10,8 @@ const walletStats = {
         message: 'High risk: Multiple transactions detected!'
       };
     }
-    
-    if (tradeCount > 5) {
+
+    if (tradeCount > 4) {
       return {
         level: 'medium',
         icon: '⚠️',
@@ -19,8 +19,8 @@ const walletStats = {
         message: 'Medium risk: Increased transactions detected!'
       };
     }
-    
-    if (tradeCount > 1) {
+
+    if (tradeCount > 2) {
       return {
         level: 'low',
         icon: '👀',
@@ -28,22 +28,22 @@ const walletStats = {
         message: 'Low risk: Normal trading activity'
       };
     }
-  
+
     return null
   },
-  
+
   calculateTotalScammerWins(stats) {
     return stats.reduce((total, entry) => {
       const profit = entry.data.sellAmount - entry.data.buyAmount;
       return total + (profit > 0 ? profit : 0);
     }, 0);
   },
-  
+
   calculateProjectRisk(stats) {
     let genuineTxs = 0;
     let susTxs = 0;
     let highRiskWallets = 0;
-    
+
     Object.values(stats).forEach(data => {
       const totalTxs = data.buys + data.sells;
       if (totalTxs <= 2) {
@@ -55,7 +55,7 @@ const walletStats = {
     });
 
     const totalTxs = genuineTxs + susTxs;
-    const susRatio = susTxs / (totalTxs || 1); 
+    const susRatio = susTxs / (totalTxs || 1);
 
     let riskLevel;
     let riskIcon;
