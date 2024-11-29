@@ -7,12 +7,36 @@ const dom = {
     
     statsDiv.innerHTML = `
       <div class="c-info js-info" style="padding-bottom: 1em">
-        <h6 class="u-font-size-zh-3xs u-p-xs">Pump & Dump Detection</h6>
+        <h6 class="u-font-size-zh-3xs u-p-xs">
+          Pump & Dump Detection
+        </h6>
         <div class="js-info__content" style="padding: 0 0.8em;">
           <div id="wallet-stats-list"></div>
         </div>
       </div>
     `;
+    
+    setTimeout(() => {
+      const filterBtn = document.getElementById('filter-bots-btn');
+      if (filterBtn) {
+        filterBtn.addEventListener('click', () => {
+          const filterBtn = document.querySelector('.c-grid-table__th:nth-child(7) .c-icon[data-icon="filter"]');
+          if (filterBtn) filterBtn.click();
+
+          // Wait for modal to appear
+          setTimeout(() => {
+            const minInput = document.querySelector('.c-modal__content input[placeholder="min"]');
+            if (minInput) {
+              minInput.value = '0.001';
+              minInput.dispatchEvent(new Event('input', { bubbles: true }));
+              
+              const applyBtn = document.querySelector('.c-modal__content .c-btn:not(.c-btn--lt)');
+              if (applyBtn) applyBtn.click();
+            }
+          }, 100);
+        });
+      }
+    }, 0);
     
     return statsDiv;
   },
@@ -26,7 +50,11 @@ const dom = {
           <div class="c-info__cell u-font-size-zh-3xs" style="border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px; margin-bottom: 8px;">
             <div class="l-row u-justify-content-between" style="align-items: center;">
               <div class="l-col-auto" style="flex: 1;">
-                ${threat.icon} <span class="${threat.class}" title="${wallet}">${wallet.substring(0, 4)}...${wallet.substring(wallet.length - 3)}</span>
+                ${threat.icon} 
+                <span class="${threat.class}" title="${wallet}">
+                  ${wallet.substring(0, 4)}...${wallet.substring(wallet.length - 3)}
+                </span>
+                <span class="u-pointer u-ml-2xs" style="opacity: 0.7;" title="Copy address" onclick="navigator.clipboard.writeText('${wallet}')">📋</span>
               </div>
               <div class="l-col-auto" style="flex: 1; text-align: right;">
                 <span title="Token Flow">🔄 FLOW: <span class="${tokenFlow >= 0 ? 'u-color-green' : 'u-color-red'}">${tokenFlow >= 0 ? '+' : '-'}${tokenFlow.toFixed(2)}</span></span><br />

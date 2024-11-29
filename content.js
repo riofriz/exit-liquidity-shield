@@ -67,7 +67,7 @@
       }))
       .filter(entry => entry.threat !== null)
       .sort((a, b) => (b.data.buyAmount + b.data.sellAmount) - (a.data.buyAmount + a.data.sellAmount))
-      .slice(0, 10);
+      .slice(0, 6);
 
     const projectRisk = walletStats.calculateProjectRisk(allWalletStats);
     const totalScammerWins = walletStats.calculateTotalScammerWins(sortedStats);
@@ -77,6 +77,12 @@
       headerDiv.innerHTML = `
         Pump & Dump Detection
         <div style="font-size: 11px; margin-top: 4px;">
+
+          <div style="text-align: center; margin: 10px 0; width: 100%;">
+            <button class="c-btn c-btn--sm u-ml-xs" id="filter-bots-btn">
+              Filter Bot Txs
+            </button> 
+          </div>
           <div style="margin-top: 10px; margin-bottom: 10px;">
             <span class="${projectRisk.riskClass}">
               ${projectRisk.riskIcon} Project Risk: ${projectRisk.totalTxs > 20 ? projectRisk.riskLevel : 'Calculating...'}
@@ -87,8 +93,32 @@
             </span>
           </div>
           <span class="u-color-red">Potential Scammer Earnings: ${totalScammerWins.toFixed(2)} SOL</span>
+          <br/>
+          <span style="font-size: 16px; margin-bottom: 10px;">
+            Top 6 Offenders: <br /><span style="font-size: 10px;">(last updated ${new Date().toLocaleTimeString()})</span>
+          </span>
         </div>
       `;
+
+      // Reattach event listener since innerHTML replacement removes it
+      const filterBtn = document.getElementById('filter-bots-btn');
+      if (filterBtn) {
+        filterBtn.addEventListener('click', () => {
+          const filterBtn = document.querySelector('.c-grid-table__th:nth-child(7) .c-icon[data-icon="filter"]');
+          if (filterBtn) filterBtn.click();
+
+          setTimeout(() => {
+            const minInput = document.querySelector('.c-modal__content input[placeholder="min"]');
+            if (minInput) {
+              minInput.value = '0.001';
+              minInput.dispatchEvent(new Event('input', { bubbles: true }));
+              
+              const applyBtn = document.querySelector('.c-modal__content .l-row-gap--xxs > div:nth-child(2) button');
+              if (applyBtn) applyBtn.click();
+            }
+          }, 100);
+        });
+      }
     }
 
     // Render stats
