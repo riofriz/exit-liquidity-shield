@@ -20,7 +20,47 @@
       targetSection.appendChild(statsDiv);
     }
 
+    function getWalletThreatLevel(data) {
+      const tradeCount = data.buys + data.sells;
+      
+      if (tradeCount > 15) {
+        return {
+          level: 'high',
+          icon: '🚨',
+          class: 'u-color-red',
+          message: 'High risk: Very active trading pattern'
+        };
+      }
+      
+      if (tradeCount > 8) {
+        return {
+          level: 'medium',
+          icon: '⚠️',
+          class: 'u-color-orange',
+          message: 'Medium risk: Increased trading activity'
+        };
+      }
+      
+      if (tradeCount > 5) {
+        return {
+          level: 'low',
+          icon: '👀',
+          class: 'u-color-green',
+          message: 'Low risk: Normal trading activity'
+        };
+      }
+
+      return null;
+    }
+
     function updateWalletStats() {
+      const statsList = document.getElementById('wallet-stats-list');
+      if (!statsList) {
+        console.log('Stats list element not found, retrying in 1 second...');
+        setTimeout(updateWalletStats, 1000);
+        return;
+      }
+
       const list = document.getElementById('wallet-stats-list');
       if (!list) {
         console.log('Stats list element not found, retrying in 1 second...');
@@ -62,21 +102,35 @@
       });
 
       const sortedStats = Object.entries(allWalletStats)
+        .map(([wallet, data]) => ({
+          wallet,
+          data,
+          threat: getWalletThreatLevel(data)
+        }))
+        .filter(entry => entry.threat !== null)
         .sort((a, b) => {
-          const totalA = a[1].buyAmount + a[1].sellAmount;
-          const totalB = b[1].buyAmount + b[1].sellAmount;
+          const totalA = a.data.buyAmount + a.data.sellAmount;
+          const totalB = b.data.buyAmount + b.data.sellAmount;
           return totalB - totalA;
         })
-        .slice(0, 10); 
+        .slice(0, 10);
 
-      const statsList = document.getElementById('wallet-stats-list');
+      if (sortedStats.length === 0) {
+        statsList.innerHTML = `
+          <div class="l-row l-row-gap--l u-mt-s">
+            <div class="l-col">
+              <div class="c-info__cell u-font-size-zh-3xs u-text-center">
+                <span style="color: #4CAF50">✅ No suspicious activity detected so far</span>
+              </div>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
       statsList.innerHTML = sortedStats
-        .map(([wallet, data]) => {
+        .map(({wallet, data, threat}) => {
           const totalVolume = data.buyAmount + data.sellAmount;
-          const netPosition = data.sellAmount - data.buyAmount;
-          const netPositionClass = netPosition >= 0 ? 'u-color-green' : 'u-color-red';
-          const netPositionSign = netPosition >= 0 ? '+' : '';
-          
           const tokenFlow = data.buyAmount - data.sellAmount;
           const profitLoss = data.sellAmount - data.buyAmount;
 
@@ -84,28 +138,28 @@
           const plClass = profitLoss >= 0 ? 'u-color-green' : 'u-color-red';
           const tokenFlowSign = tokenFlow >= 0 ? '+' : '';
           const plSign = profitLoss >= 0 ? '+' : '';
-          
+
           return `
             <div class="l-row l-row-gap--l u-mt-s">
               <div class="l-col">
                 <div class="c-info__cell u-font-size-zh-3xs">
-                  <div class="l-row u-justify-content-between">
-                    <div class="l-col-auto">
-                      ${wallet.substring(0, 5)}...${wallet.substring(wallet.length - 4)}
+                  <div class="l-row u-justify-content-between" style="align-items: center;">
+                    <div class="l-col-auto" style="flex: 1;">
+                      ${threat.icon} <span class="${threat.class}">${wallet.substring(0, 5)}...${wallet.substring(wallet.length - 4)}</span>
                     </div>
-                    <div class="l-col-auto">
-                      <span title="Token Flow">🔄 money flow: <span class="${tokenFlowClass}">${tokenFlowSign}${tokenFlow.toFixed(2)}</span></span>
-                      <span title="Profit/Loss" style="margin-left: 8px">💰 Scammer ${profitLoss >= 0 ? 'wins' : 'loses'}: <span class="${plClass}">${plSign}${profitLoss.toFixed(2)}</span></span>
+                    <div class="l-col-auto" style="flex: 1; text-align: right;">
+                      <span title="Token Flow">🔄 <span class="${tokenFlowClass}">${tokenFlowSign}${tokenFlow.toFixed(2)}</span></span><br />
+                      <span title="Profit/Loss">💰 Scammer ${profitLoss >= 0 ? 'wins' : 'accumulating'}: <span class="${plClass}">${plSign}${Math.abs(profitLoss).toFixed(2)}</span></span>
                     </div>
                   </div>
-                  <div class="l-row u-justify-content-between">
-                    <div class="l-col-auto">
+                  <div class="l-row u-justify-content-between" style="margin-top: 8px;">
+                    <div class="l-col-auto" style="flex: 1;">
                       <div class="c-info__cell u-font-size-zh-3xs">
                         Buys
                         <div class="c-info__cell__value u-color-green">${data.buys} (${data.buyAmount.toFixed(2)} SOL)</div>
                       </div>
                     </div>
-                    <div class="l-col-auto">
+                    <div class="l-col-auto" style="flex: 1; text-align: right;">
                       <div class="c-info__cell u-text-right u-font-size-zh-3xs">
                         Sells
                         <div class="c-info__cell__value u-color-red">${data.sells} (${data.sellAmount.toFixed(2)} SOL)</div>
@@ -119,6 +173,11 @@
                     <div class="l-col js-info__line__red" style="flex: 0 0 ${(data.sellAmount / totalVolume * 100).toFixed(2)}%;">
                       <div class="c-info__line"></div>
                     </div>
+                  </div>
+                </div>
+                <div class="l-row">
+                  <div class="l-col">
+                    <small style="font-size: 10px" class="${threat.class}">${threat.message}</small>
                   </div>
                 </div>
               </div>
