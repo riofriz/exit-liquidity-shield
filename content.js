@@ -69,15 +69,24 @@
       .sort((a, b) => (b.data.buyAmount + b.data.sellAmount) - (a.data.buyAmount + a.data.sellAmount))
       .slice(0, 10);
 
+    const projectRisk = walletStats.calculateProjectRisk(allWalletStats);
     const totalScammerWins = walletStats.calculateTotalScammerWins(sortedStats);
     
-    // Update header with total wins
     const headerDiv = document.querySelector('.js-info h6');
     if (headerDiv) {
       headerDiv.innerHTML = `
         Pump & Dump Detection
         <div style="font-size: 11px; margin-top: 4px;">
-          <span class="u-color-red">Total Scammer Wins: ${totalScammerWins.toFixed(2)} SOL</span>
+          <div style="margin-top: 10px; margin-bottom: 10px;">
+            <span class="${projectRisk.riskClass}">
+              ${projectRisk.riskIcon} Project Risk: ${projectRisk.totalTxs > 20 ? projectRisk.riskLevel : 'Calculating...'}
+            </span>
+            <br/>
+            <span style="color: #888;">
+              Genuine Trades: ${projectRisk.genuineTxs} | Suspicious: ${projectRisk.susTxs}
+            </span>
+          </div>
+          <span class="u-color-red">Potential Scammer Earnings: ${totalScammerWins.toFixed(2)} SOL</span>
         </div>
       `;
     }

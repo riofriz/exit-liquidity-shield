@@ -20,7 +20,7 @@ const walletStats = {
       };
     }
     
-    if (tradeCount > 2) {
+    if (tradeCount > 1) {
       return {
         level: 'low',
         icon: '👀',
@@ -29,12 +29,7 @@ const walletStats = {
       };
     }
   
-    return {
-      level: 'none',
-      icon: '✅',
-      class: 'u-color-green',
-      message: 'New or minimal activity'
-    };
+    return null
   },
   
   calculateTotalScammerWins(stats) {
@@ -42,5 +37,55 @@ const walletStats = {
       const profit = entry.data.sellAmount - entry.data.buyAmount;
       return total + (profit > 0 ? profit : 0);
     }, 0);
+  },
+  
+  calculateProjectRisk(stats) {
+    let genuineTxs = 0;
+    let susTxs = 0;
+    let highRiskWallets = 0;
+    
+    Object.values(stats).forEach(data => {
+      const totalTxs = data.buys + data.sells;
+      if (totalTxs <= 2) {
+        genuineTxs += totalTxs;
+      } else {
+        susTxs += totalTxs;
+        if (totalTxs > 5) highRiskWallets++;
+      }
+    });
+
+    const totalTxs = genuineTxs + susTxs;
+    const susRatio = susTxs / (totalTxs || 1); 
+
+    let riskLevel;
+    let riskIcon;
+    let riskClass;
+    if (susRatio > 0.5 && highRiskWallets > 3) {
+      riskLevel = "SEVERE";
+      riskIcon = "🔥";
+      riskClass = "u-color-red";
+    } else if (susRatio > 0.3 || highRiskWallets > 2) {
+      riskLevel = "HIGH";
+      riskIcon = "🚨";
+      riskClass = "u-color-red";
+    } else if (susRatio > 0.2) {
+      riskLevel = "MEDIUM";
+      riskIcon = "⚠️";
+      riskClass = "u-color-orange";
+    } else {
+      riskLevel = "LOW";
+      riskIcon = "✅";
+      riskClass = "u-color-green";
+    }
+
+    return {
+      totalTxs,
+      genuineTxs,
+      susTxs,
+      riskLevel,
+      riskIcon,
+      riskClass,
+      highRiskWallets
+    };
   }
 };
