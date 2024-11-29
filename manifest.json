@@ -1,0 +1,26 @@
+{
+    "manifest_version": 3,
+    "name": "Exit Liquidity Shield",
+    "version": "1.0",
+    "description": "Tracks wallets constantly buying and selling on photon-sol.tinyastro.io. This should help you discover obvious pump and dump, avoid ending up being exit liquidity.",
+    "permissions": ["activeTab"],
+    "host_permissions": [
+      "https://photon-sol.tinyastro.io/*"
+    ],
+    "action": {
+      "default_popup": "popup.html",
+      "default_icon": {
+        "128": "icons/icon128.png"
+      }
+    },
+    "icons": {
+      "128": "icons/icon128.png"
+    },
+    "content_scripts": [
+      {
+        "matches": ["https://photon-sol.tinyastro.io/*"],
+        "js": ["content.js"]
+      }
+    ]
+}
+  
