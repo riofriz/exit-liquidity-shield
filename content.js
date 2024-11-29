@@ -3,7 +3,7 @@
 
   let allWalletStats = {};
   const statsDiv = dom.createStatsDiv();
-  
+
   const targetSection = document.querySelector('.p-show__widget.p-show__pair.u-py-s-lg');
   if (targetSection) {
     targetSection.appendChild(statsDiv);
@@ -27,35 +27,35 @@
     }
 
     const rows = document.querySelectorAll('.c-grid-table__tr');
-    
+
     rows.forEach((row) => {
+      const txId = row.getAttribute('data-uid');
+      if (processedTransactions.has(txId)) {
+        return; // Skip if we've already processed this transaction
+      }
+      processedTransactions.add(txId);
+
       const type = row.querySelectorAll('.c-grid-table__td')[1]?.textContent?.trim();
       const walletLink = row.querySelector('.c-grid-table__td a')?.href;
       const wallet = walletLink ? walletLink.split('/account/')[1] : null;
       const solAmount = parseFloat(
         row.querySelector('.c-grid-table__td:nth-child(5)')?.textContent?.replace(/₆|₃|,/g, '') || 0
       );
-      
-      const txId = row.querySelector('.c-grid-table__td:nth-child(1)')?.textContent?.trim();
 
-      if (!wallet || !solAmount || !txId) {
+      if (!wallet || !solAmount) {
         return;
       }
 
-      if (!processedTransactions.has(txId)) {
-        processedTransactions.add(txId);
+      if (!allWalletStats[wallet]) {
+        allWalletStats[wallet] = { buys: 0, sells: 0, buyAmount: 0, sellAmount: 0 };
+      }
 
-        if (!allWalletStats[wallet]) {
-          allWalletStats[wallet] = { buys: 0, sells: 0, buyAmount: 0, sellAmount: 0 };
-        }
-
-        if (type.toLowerCase().includes('buy')) {
-          allWalletStats[wallet].buys++;
-          allWalletStats[wallet].buyAmount += solAmount;
-        } else if (type.toLowerCase().includes('sell')) {
-          allWalletStats[wallet].sells++;
-          allWalletStats[wallet].sellAmount += solAmount;
-        }
+      if (type.toLowerCase().includes('buy')) {
+        allWalletStats[wallet].buys++;
+        allWalletStats[wallet].buyAmount += solAmount;
+      } else if (type.toLowerCase().includes('sell')) {
+        allWalletStats[wallet].sells++;
+        allWalletStats[wallet].sellAmount += solAmount;
       }
     });
 
@@ -71,7 +71,7 @@
 
     const projectRisk = walletStats.calculateProjectRisk(allWalletStats);
     const totalScammerWins = walletStats.calculateTotalScammerWins(sortedStats);
-    
+
     const headerDiv = document.querySelector('.js-info h6');
     if (headerDiv) {
       headerDiv.innerHTML = `
@@ -112,7 +112,7 @@
             if (minInput) {
               minInput.value = '0.001';
               minInput.dispatchEvent(new Event('input', { bubbles: true }));
-              
+
               const applyBtn = document.querySelector('.c-modal__content .l-row-gap--xxs > div:nth-child(2) button');
               if (applyBtn) applyBtn.click();
             }
@@ -122,7 +122,7 @@
     }
 
     // Render stats
-    statsList.innerHTML = sortedStats.length === 0 
+    statsList.innerHTML = sortedStats.length === 0
       ? `<div class="l-row l-row-gap--l u-mt-s">
            <div class="l-col">
              <div class="c-info__cell u-font-size-zh-3xs u-text-center">
@@ -131,12 +131,12 @@
            </div>
          </div>`
       : sortedStats
-          .map(({wallet, data, threat}) => {
-            const tokenFlow = data.buyAmount - data.sellAmount;
-            const profitLoss = data.sellAmount - data.buyAmount;
-            return dom.renderWalletStats(wallet, data, threat, tokenFlow, profitLoss);
-          })
-          .join('');
+        .map(({ wallet, data, threat }) => {
+          const tokenFlow = data.buyAmount - data.sellAmount;
+          const profitLoss = data.sellAmount - data.buyAmount;
+          return dom.renderWalletStats(wallet, data, threat, tokenFlow, profitLoss);
+        })
+        .join('');
   }
 
   setInterval(updateWalletStats, 1000);

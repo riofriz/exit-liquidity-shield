@@ -4,7 +4,7 @@ const dom = {
     statsDiv.id = 'wallet-stats';
     statsDiv.className = 'p-show__widget p-show__info u-p-0 u-mb-xs u-mb-0-lg';
     statsDiv.style.marginTop = '20px';
-    
+
     statsDiv.innerHTML = `
       <div class="c-info js-info" style="padding-bottom: 1em">
         <h6 class="u-font-size-zh-3xs u-p-xs">
@@ -15,7 +15,7 @@ const dom = {
         </div>
       </div>
     `;
-    
+
     setTimeout(() => {
       const filterBtn = document.getElementById('filter-bots-btn');
       if (filterBtn) {
@@ -29,7 +29,7 @@ const dom = {
             if (minInput) {
               minInput.value = '0.001';
               minInput.dispatchEvent(new Event('input', { bubbles: true }));
-              
+
               const applyBtn = document.querySelector('.c-modal__content .c-btn:not(.c-btn--lt)');
               if (applyBtn) applyBtn.click();
             }
@@ -37,13 +37,13 @@ const dom = {
         });
       }
     }, 0);
-    
+
     return statsDiv;
   },
 
   renderWalletStats(wallet, data, threat, tokenFlow, profitLoss) {
     const totalVolume = data.buyAmount + data.sellAmount;
-    
+
     return `
       <div class="l-row l-row-gap--l u-mt-s">
         <div class="l-col">
