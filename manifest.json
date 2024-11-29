@@ -18,8 +18,12 @@
     },
     "content_scripts": [
       {
-        "matches": ["https://photon-sol.tinyastro.io/*"],
-        "js": ["content.js"]
+        "matches": ["*://photon-sol.tinyastro.io/*"],
+        "js": [
+          "src/utils/walletStats.js",
+          "src/utils/dom.js",
+          "content.js"
+        ]
       }
     ]
 }
