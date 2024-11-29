@@ -2,21 +2,21 @@ const walletStats = {
   getWalletThreatLevel(data) {
     const tradeCount = data.buys + data.sells;
     
-    if (tradeCount > 10) {
+    if (tradeCount > 8) {
       return {
         level: 'high',
         icon: '🚨',
         class: 'u-color-red',
-        message: 'High risk: Very active trading pattern'
+        message: 'High risk: Multiple transactions detected!'
       };
     }
     
-    if (tradeCount > 6) {
+    if (tradeCount > 5) {
       return {
         level: 'medium',
         icon: '⚠️',
         class: 'u-color-orange',
-        message: 'Medium risk: Increased trading activity'
+        message: 'Medium risk: Increased transactions detected!'
       };
     }
     

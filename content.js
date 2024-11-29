@@ -11,7 +11,15 @@
 
   let processedTransactions = new Set();
 
+  let updateCounter = 0;
+  let lastUpdateTime = Date.now();
+
   function updateWalletStats() {
+    updateCounter++;
+    const now = Date.now();
+    const timeSinceLastUpdate = now - lastUpdateTime;
+    lastUpdateTime = now;
+
     const statsList = document.getElementById('wallet-stats-list');
     if (!statsList) {
       setTimeout(updateWalletStats, 1000);
@@ -30,7 +38,11 @@
       
       const txId = row.querySelector('.c-grid-table__td:nth-child(1)')?.textContent?.trim();
 
-      if (wallet && solAmount && txId && !processedTransactions.has(txId)) {
+      if (!wallet || !solAmount || !txId) {
+        return;
+      }
+
+      if (!processedTransactions.has(txId)) {
         processedTransactions.add(txId);
 
         if (!allWalletStats[wallet]) {
