@@ -78,8 +78,6 @@
           row.querySelector('.c-grid-table__td:nth-child(5)')?.textContent?.replace(/₆|₃|,/g, '') || 0
         );
 
-        console.log('Full wallet address:', wallet);
-
         if (wallet && solAmount) {
           if (!allWalletStats[wallet]) {
             allWalletStats[wallet] = {
@@ -158,9 +156,6 @@
           const plClass = profitLoss >= 0 ? 'u-color-green' : 'u-color-red';
           const tokenFlowSign = tokenFlow >= 0 ? '+' : '';
           const plSign = profitLoss >= 0 ? '+' : '';
-
-          console.log('Full wallet address:', wallet);
-          console.log('Truncated address:', `${wallet.substring(0, 4)}...${wallet.substring(wallet.length - 3)}`);
 
           return `
             <div class="l-row l-row-gap--l u-mt-s">
