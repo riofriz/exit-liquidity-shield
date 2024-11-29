@@ -61,13 +61,6 @@
         return;
       }
 
-      const list = document.getElementById('wallet-stats-list');
-      if (!list) {
-        console.log('Stats list element not found, retrying in 1 second...');
-        setTimeout(updateWalletStats, 1000);
-        return;
-      }
-
       const rows = document.querySelectorAll('.c-grid-table__tr');
       
       rows.forEach((row) => {
@@ -84,9 +77,7 @@
               buys: 0,
               sells: 0,
               buyAmount: 0,
-              sellAmount: 0,
-              firstSeen: Date.now(),
-              lastSeen: Date.now()
+              sellAmount: 0
             };
           }
 
@@ -126,7 +117,7 @@
       const headerDiv = document.querySelector('.js-info h6');
       if (headerDiv) {
         headerDiv.innerHTML = `
-          Potentially Pump & Dump
+          Pump & Dump Detection
           <div style="font-size: 11px; margin-top: 4px;">
             <span class="u-color-red">Total Scammers Wins: ${totalScammerWins.toFixed(2)} SOL</span>
           </div>
