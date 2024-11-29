@@ -6,7 +6,7 @@ const dom = {
     statsDiv.style.marginTop = '20px';
     
     statsDiv.innerHTML = `
-      <div class="c-info js-info">
+      <div class="c-info js-info" style="padding-bottom: 1em">
         <h6 class="u-font-size-zh-3xs u-p-xs">Pump & Dump Detection</h6>
         <div class="js-info__content" style="padding: 0 0.8em;">
           <div id="wallet-stats-list"></div>
