@@ -26,8 +26,8 @@ When you see somethign like this in the potential pump & dump section:
 _This chart shows a typical pump & dump pattern where price is artificially inflated before a sharp sell-off_
 
 Trust me, it will ALWAYS end up like this:
-![Pump and Dump Example](images/pumpdump-final.jpeg)
-_This chart shows the obvious end of the pump & dump pattern_
+![Pump and Dump Example](images/pumpdump-final.png)
+_This chart shows the obvious end of the pump & dump pattern, scammers walked away with over 40SOL.. YOUR MONEY!_
 
 ## Installation
 
@@ -74,11 +74,16 @@ exit-liquidity-shield/
 ├── manifest.json
 ├── popup.html
 ├── content.js
+├── background.js
+├── src/
+│   └── utils/
+│       ├── dom.js
+│       └── walletStats.js
+├── images/
+│   ├── pumpdump.png
+│   └── pumpdump-bottomfeeders.jpeg
 └── icons/
-├── icon16.png
-├── icon32.png
-├── icon48.png
-└── icon128.png
+    └── icon128.png
 ```
 
 ### Building from Source
@@ -95,14 +100,14 @@ git clone https://github.com/yourusername/exit-liquidity-shield.git
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch (\`git checkout -b feature/AmazingFeature\`)
-3. Commit your changes (\`git commit -m 'Add some AmazingFeature'\`)
-4. Push to the branch (\`git push origin feature/AmazingFeature\`)
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
 ## License
 
-Distributed under the MIT License. See \`LICENSE\` for more information.
+Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Security
 
